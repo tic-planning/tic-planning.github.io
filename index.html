@@ -65,8 +65,11 @@
       <div class="hero-body">
         <div class="container is-max-widescreen has-text-centered">
           <p class="venue">IROS 2026</p>
-          <h1 class="title publication-title">Beyond Fixed-Goal Delivery</h1>
-          <p class="publication-subtitle">Online POMDP Planning for Target Interception in Crowds</p>
+          <h1 class="title publication-title">
+            Beyond Fixed-Goal Delivery: Online POMDP<br>
+            Planning for Target Interception in Crowds
+          </h1>
+          <div class="title-divider" aria-hidden="true"></div>
 
           <div class="publication-authors">
             <span class="author-block">Himanshu Gupta,</span>
@@ -84,9 +87,6 @@
             <span class="button is-rounded is-light coming-soon" aria-disabled="true">Code (coming soon)</span>
           </div>
 
-          <p class="takeaway">
-            A robot must intercept a moving target while navigating safely among humans whose intentions are unobservable.
-          </p>
         </div>
       </div>
     </section>
@@ -94,7 +94,6 @@
     <section class="section-tic" id="abstract">
       <div class="container is-max-desktop">
         <p class="section-eyebrow">Abstract</p>
-        <h2 class="section-title">Planning to meet a moving objective in a crowd</h2>
         <div class="content abstract-text">
           <p>
             Target interception in crowded environments requires reaching a moving objective while navigating among multiple uncertain human agents. Since human navigation intent is not directly observable, the robot must reason over multiple possible future interaction outcomes. We formulate interception in crowds as a partially observable Markov decision process and solve it online using tree search under a fixed computational budget. In this setting, the action-space structure directly shapes the search tree and how computational effort is allocated. We compare a sequential path–speed planner, which first plans a spatial path and then modulates speed along it, and a unified planner that jointly branches over steering and speed within tree search. Across simulations with up to 200 humans, both approaches perform similarly at low crowd density but diverge sharply as density increases. In dense settings, the sequential planner drops by over 30% in safe interception rate and requires around 40% more time to intercept than the unified steering–speed planner, revealing a structural limitation of spatial restriction.
@@ -117,27 +116,20 @@
 
     <section class="section-tic">
       <div class="container is-max-desktop">
-        <p class="section-eyebrow">Core finding</p>
-        <h2 class="section-title">Dense crowds expose the cost of spatial restriction</h2>
+        <p class="section-eyebrow">Planning formulations</p>
+        <h2 class="section-title">Action-space structure in online tree search</h2>
         <p class="section-lede">
-          Interception couples <strong>where</strong> the robot should meet the target with <strong>when</strong> it can safely arrive. As crowd density increases, planning speed along a fixed path becomes increasingly restrictive.
+          P-LSP first predicts a future target position and uses Hybrid A* to construct a kinodynamically feasible path to that position. Online tree search then controls the robot's speed along the fixed path. ESP instead exposes both steering and speed decisions to tree search. The experiments examine how this difference in action-space structure affects interception performance as crowd density increases.
         </p>
-        <div class="idea-grid">
-          <article class="idea-card">
-            <span class="card-label">P-LSP</span>
-            <h3>Predict a target position, then plan a path</h3>
-            <p>Predictive LSP uses Hybrid A* to plan a kinodynamically feasible path to the target's predicted future position. Tree search then controls only speed along that fixed path, restricting how the robot can respond when crowd interactions change where and when interception is feasible.</p>
-          </article>
-          <article class="idea-card">
-            <span class="card-label">ESP</span>
-            <h3>Steering and speed together</h3>
-            <p>Extended Space Planning jointly branches over steering and speed, allowing tree search to revise the spatial trajectory when interactions change the feasible interception time and location.</p>
-          </article>
-          <article class="idea-card result-highlight">
-            <span class="card-label">Dense crowds</span>
-            <h3><strong>31-point</strong> safe-success gap</h3>
-            <p>At 200 humans, ESP retains <strong>97% safe success</strong>, compared with <strong>66% for P-LSP</strong>, even though both approaches perform similarly at low crowd density.</p>
-          </article>
+        <div class="method-comparison">
+          <div class="method-block">
+            <h3>Predictive Limited Space Planning (P-LSP)</h3>
+            <p>Hybrid A* plans to a predicted future target position. Tree search selects speed updates along the resulting path.</p>
+          </div>
+          <div class="method-block">
+            <h3>Extended Space Planning (ESP)</h3>
+            <p>Tree search selects both steering and speed actions, allowing the spatial trajectory to change during planning.</p>
+          </div>
         </div>
       </div>
     </section>
@@ -145,67 +137,61 @@
     <section class="section-tic is-soft" id="results">
       <div class="container is-max-widescreen">
         <p class="section-eyebrow">Results</p>
-        <h2 class="section-title">Spatial flexibility preserves safe interception as crowds grow</h2>
+        <h2 class="section-title">Interception performance across crowd densities</h2>
         <p class="section-lede">
           We evaluate each planner over 500 paired trials at every crowd size, from 50 to 200 humans. The planners use the same observations, belief representation, reward, and 0.5-second planning budget.
         </p>
 
-        <div class="stat-grid">
-          <div class="stat-card">
-            <strong>97%</strong>
-            <span>ESP safe success at 200 humans</span>
-          </div>
-          <div class="stat-card">
-            <strong>66%</strong>
-            <span>P-LSP safe success at 200 humans</span>
-          </div>
-          <div class="stat-card">
-            <strong>31 pts</strong>
-            <span>ESP advantage in safe success over P-LSP</span>
-          </div>
-          <div class="stat-card">
-            <strong>98 vs. 114 s</strong>
-            <span>ESP versus P-LSP interception time with target estimation</span>
-          </div>
-        </div>
+        <h3 class="result-heading">Primary study</h3>
+        <p class="result-copy">
+          The primary study assumes that the target state is fully observable, isolating the effect of action-space structure under increasing crowd density.
+        </p>
+        <ul class="key-findings" aria-label="Primary study key findings at 200 humans">
+          <li><strong>Approximately 47% higher safe-success rate:</strong> 97% for ESP versus 66.2% for P-LSP.</li>
+          <li><strong>Approximately 30% shorter time to interception:</strong> 63.3 seconds for ESP versus 90.9 seconds for P-LSP.</li>
+        </ul>
 
         <figure class="result-figure">
           <img src="static/images/fig3_primary_results.png" loading="lazy" alt="Primary-study plots of interception success, safe-success, and time to interception as crowd size increases for ESP, predictive LSP, and reactive LSP">
           <figcaption>
-            <strong>Fully observable target.</strong> ESP and P-LSP are competitive at low density, but the gap widens with crowd size. At 200 humans, ESP maintains 98% interception success and 97% safe success; P-LSP achieves 96% success but only 66% safe success.
+            <strong>Figure 3: Fully observable target.</strong> Interception success rate, safe-success rate, and time to interception as a function of crowd density. At 200 humans, ESP and P-LSP achieve 98% and 96% interception success, respectively; their safe-success rates are 97% and 66%.
           </figcaption>
         </figure>
 
         <div class="result-divider"></div>
 
-        <h3 class="result-heading">The advantage persists when the target is only intermittently observed</h3>
+        <h3 class="result-heading">Secondary study</h3>
         <p class="result-copy">
-          In the secondary study, a particle filter estimates target state from intermittent detections. At 200 humans, ESP maintains about 90% success, compared with 83% for P-LSP. ESP intercepts in about 98 seconds on average, versus 114 seconds for P-LSP.
+          The secondary study uses a particle filter to estimate target state from intermittent detections, and the planner acts on the most likely target-state estimate.
         </p>
+        <ul class="key-findings" aria-label="Secondary study key findings at 200 humans">
+          <li><strong>Approximately 55% higher safe-success rate:</strong> 87% for ESP versus 56% for P-LSP.</li>
+          <li><strong>Approximately 13% shorter time to interception:</strong> 98.2 seconds for ESP versus 113.1 seconds for P-LSP.</li>
+        </ul>
         <figure class="result-figure">
           <img src="static/images/fig4_secondary_results.png" loading="lazy" alt="Secondary-study plots of interception success, safe-success, and time to interception with intermittent target observations">
           <figcaption>
-            <strong>Estimated target state.</strong> Spatially expressive search remains beneficial even when the planner must act on the most likely target estimate rather than the true target state.
+            <strong>Figure 4: Estimator–planner setting.</strong> Interception success rate, safe-success rate, and time to interception when the planner operates on the most likely target-state estimate.
           </figcaption>
         </figure>
 
         <div class="result-divider"></div>
 
-        <h3 class="result-heading">ESP keeps moving instead of hesitating</h3>
+        <h3 class="result-heading">Motion characteristics</h3>
         <p class="result-copy">
-          Compared with P-LSP, ESP exhibits less idle time, higher average speed, and fewer sudden-braking events. It can travel farther while still intercepting sooner, indicating active maneuvering around people rather than stalling along a restricted path.
+          In the estimator–planner study, ESP exhibits lower idle time, higher average speed, and fewer sudden-braking events than P-LSP. ESP also covers more distance while requiring less time to intercept the target.
         </p>
         <figure class="result-figure">
           <img src="static/images/fig5_motion_statistics.png" loading="lazy" alt="Motion-statistics plots comparing idle time, average speed, sudden braking, and distance traveled">
           <figcaption>
-            <strong>Motion characteristics.</strong> P-LSP increasingly hesitates and brakes reactively as crowd density rises, while ESP maintains more consistent progress.
+            <strong>Figure 5: Motion statistics.</strong> Idle time, average speed, sudden-braking count, and distance traveled in the estimator–planner setting.
           </figcaption>
         </figure>
 
         <figure class="result-figure">
           <img src="static/images/fig6_interception_snapshots.png" loading="lazy" alt="Five snapshots showing ESP navigating through a dense crowd toward a moving target while maintaining a particle-filter target belief">
           <figcaption>
-            <strong>Representative ESP trial.</strong> The robot progresses through the crowd toward the moving target while maintaining a particle-filter belief from intermittent observations.
+            <strong>Figure 6: Representative ESP trial.</strong> Snapshots at <em>T</em> = {5, 15, 30, 50, 60} s. The robot (white) navigates through a dense crowd to intercept the target (yellow) while maintaining a belief over the target state. Red dots denote particles of the particle-filter belief, black figures represent humans, the blue sector shows the robot's sensing region, and the orange curve shows the executed robot trajectory.
           </figcaption>
         </figure>
       </div>
