@@ -9,7 +9,7 @@
   --teal: #2b8a82;
 }
 
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; scrollbar-gutter: stable both-edges; }
 body { background: #fff; color: var(--ink); font-family: "Noto Sans", sans-serif; }
 a { color: var(--blue); }
 .site-hero {
